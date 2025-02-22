@@ -30,9 +30,9 @@ You can use the following commands to encrypt and decrypt messages:
     ```bash
     node message-mixer.js caesar <shift_value>
     ```
-    Example (with shift value of 4):
+    Example
     ```bash
-    node message-mixer.js caesar 4
+    node message-mixer.js caesar 5
     ```
 
 - **Symbol Cipher**:  
@@ -56,9 +56,13 @@ When prompted, enter the message you want to encrypt.
 To decrypt a message, use the same methods but with reversed operations:
 
 - **Caesar Cipher**:  
-    Use a negative shift value for decoding:
+    Run the command:
     ```bash
-    node message-mixer.js caesar -4
+    node message-mixer.js caesar -<shift_value>
+    ```
+    Example
+    ```bash
+    node message-mixer.js caesar -5
     ```
 
 - **Symbol Cipher**:  
@@ -74,10 +78,12 @@ To decrypt a message, use the same methods but with reversed operations:
     ```
 
 ### Example for Encrypting:
-
 ```bash
+Example
+> node message-mixer.js caesar 5
+
 Enter the message you would like to encrypt...
 > hello world
 
 Here is your encrypted message:
-> lipps asvph
+> mjqqt btwqi

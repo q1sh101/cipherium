@@ -1,5 +1,7 @@
 // Encryptors.js - Contains encryption functions
 
+const crypto = require('crypto'); // Import the crypto module for SHA-256
+
 // Caesar Cipher
 const caesarCipher = (str, amount = 0) => {
   if (amount < 0) {
@@ -92,10 +94,28 @@ const vigenereCipher = (str, key) => {
   return output;
 };
 
+// Base64 Encoding
+const base64Encode = (str) => {
+  return Buffer.from(str).toString('base64'); // Convert string to base64
+};
+
+// Base64 Decoding
+const base64Decode = (str) => {
+  return Buffer.from(str, 'base64').toString('utf-8'); // Convert base64 to string
+};
+
+// SHA-256 Hashing
+const sha256Hash = (str) => {
+  return crypto.createHash('sha256').update(str).digest('hex'); // Hash the string using SHA-256
+};
+
 // Exporting the functions to be used in other files
 module.exports = {
   caesarCipher,
   symbolCipher,
   reverseCipher,
-  vigenereCipher
+  vigenereCipher,
+  base64Encode,
+  base64Decode,
+  sha256Hash
 };

@@ -1,5 +1,6 @@
-// main.js - Main terminal interface for CodexCipher
 const { caesarCipher, symbolCipher, reverseCipher, vigenereCipher } = require('./encryptors');
+const crypto = require('crypto');  // Import crypto module for SHA256
+const Buffer = require('buffer').Buffer;  // Import Buffer for Base64
 
 // ANSI color codes (minimal set)
 const color = {
@@ -15,6 +16,21 @@ function colorText(text, colorCode) {
   return `${colorCode}${text}${color.reset}`;
 }
 
+// Base64 Encoding Function
+function base64Encode(str) {
+  return Buffer.from(str).toString('base64');
+}
+
+// Base64 Decoding Function
+function base64Decode(str) {
+  return Buffer.from(str, 'base64').toString('utf-8');
+}
+
+// SHA256 Hashing Function
+function sha256Hash(str) {
+  return crypto.createHash('sha256').update(str).digest('hex');
+}
+
 // Displays the main menu
 function displayMenu() {
   process.stdout.write(`
@@ -27,9 +43,11 @@ ${colorText('║ 3. Reverse Cipher                      ║', color.green)}
 ${colorText('║ 4. Vigenère Cipher                     ║', color.green)} 
 ${colorText('║ 5. Super Encoder (Encode)              ║', color.green)}
 ${colorText('║ 6. Super Encoder (Decode)              ║', color.green)}
-${colorText('║ 7. Exit                                ║', color.red)}  
+${colorText('║ 7. Base64 Encode/Decode                ║', color.green)}  // Added option
+${colorText('║ 8. SHA256 Hash                         ║', color.green)}  // Added option
+${colorText('║ 9. Exit                                ║', color.red)}  
 ${colorText('╚════════════════════════════════════════╝', color.cyan)}
-${colorText('Choose an option (1-7): ', color.yellow)}`);
+${colorText('Choose an option (1-9): ', color.yellow)}`);
 }
 
 // Handles Caesar Cipher logic
@@ -54,12 +72,23 @@ function handleCaesarCipher() {
   });
 }
 
-// Handles Symbol Cipher logic (same pattern for Reverse Cipher)
+// Handles Symbol Cipher logic
 function handleSymbolCipher() {
   process.stdout.write(colorText('Enter message: ', color.yellow));
   process.stdin.once('data', (messageInput) => {
     const message = messageInput.toString().trim();
     const result = symbolCipher(message);
+    process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+    askTryAgain();
+  });
+}
+
+// Handles Reverse Cipher logic
+function handleReverseCipher() {
+  process.stdout.write(colorText('Enter message: ', color.yellow));
+  process.stdin.once('data', (messageInput) => {
+    const message = messageInput.toString().trim();
+    const result = reverseCipher(message);
     process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
     askTryAgain();
   });
@@ -118,6 +147,42 @@ function handleSuperCipher(isEncode) {
   });
 }
 
+// Handles Base64 encoding/decoding
+function handleBase64() {
+  process.stdout.write(colorText('Enter message to encode or decode in Base64: ', color.yellow));
+  process.stdin.once('data', (messageInput) => {
+    const message = messageInput.toString().trim();
+    process.stdout.write(colorText('Would you like to (1) encode or (2) decode? ', color.yellow));
+    process.stdin.once('data', (choiceInput) => {
+      const choice = choiceInput.toString().trim();
+      let result;
+      if (choice === '1') {
+        result = base64Encode(message);
+        process.stdout.write(`\n${colorText('Base64 Encoded: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+      } else if (choice === '2') {
+        result = base64Decode(message);
+        process.stdout.write(`\n${colorText('Base64 Decoded: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+      } else {
+        process.stdout.write(colorText('Invalid choice! Please choose 1 or 2.\n', color.red));
+        handleBase64();  // Recursive retry
+        return;
+      }
+      askTryAgain();
+    });
+  });
+}
+
+// Handles SHA256 hashing
+function handleSHA256() {
+  process.stdout.write(colorText('Enter message to hash with SHA256: ', color.yellow));
+  process.stdin.once('data', (messageInput) => {
+    const message = messageInput.toString().trim();
+    const result = sha256Hash(message);
+    process.stdout.write(`\n${colorText('SHA256 Hash: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+    askTryAgain();
+  });
+}
+
 // Retry/Exit logic
 function askTryAgain() {
   process.stdout.write(colorText('Try again? (yes/no): ', color.yellow));
@@ -143,18 +208,13 @@ function listenForMenuInput() {
     switch(choice) {
       case '1': handleCaesarCipher(); break;
       case '2': handleSymbolCipher(); break;
-      case '3': 
-        process.stdout.write(colorText('Enter message: ', color.yellow));
-        process.stdin.once('data', (msg) => {
-          const result = reverseCipher(msg.toString().trim());
-          process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
-          askTryAgain();
-        });
-        break;
-      case '4': handleVigenereCipher(); break; // Vigenère option
+      case '3': handleReverseCipher(); break;
+      case '4': handleVigenereCipher(); break;
       case '5': handleSuperCipher(true); break;
       case '6': handleSuperCipher(false); break;
-      case '7': process.exit(); break; // Updated exit option
+      case '7': handleBase64(); break;
+      case '8': handleSHA256(); break;
+      case '9': process.exit(); break;
       default:
         process.stdout.write(colorText('Invalid choice!\n', color.red));
         displayMenu();

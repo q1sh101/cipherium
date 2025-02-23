@@ -1,5 +1,5 @@
 // Import encryption functions from encryptors.js
-const { caesarCipher, symbolCipher, reverseCipher, vigenereCipher } = require('./encryptors');
+const { caesarCipher, symbolCipher, reverseCipher, vigenereCipher, base64Encode, sha256Hash } = require('./encryptors');
 
 // Helper function for determining the encryption method
 function getEncryptionMethod() {
@@ -24,8 +24,12 @@ function getEncryptionMethod() {
       process.exit();
     }
     encryptionMethod = (str) => vigenereCipher(str, key);
+  } else if (encryptionType === 'base64') {
+    encryptionMethod = base64Encode;
+  } else if (encryptionType === 'sha256') {
+    encryptionMethod = sha256Hash;
   } else {
-    process.stdout.write(`Please provide a valid encryption type: symbol, reverse, caesar, or vigenere.\n`);
+    process.stdout.write(`Please provide a valid encryption type: symbol, reverse, caesar, vigenere, base64, or sha256.\n`);
     process.exit();
   }
 

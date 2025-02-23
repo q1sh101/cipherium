@@ -1,9 +1,9 @@
 // Import the encryptors functions
-const { caesarCipher, symbolCipher, reverseCipher, vigenereCipher } = require('./encryptors');
+const { caesarCipher, symbolCipher, reverseCipher, vigenereCipher, base64Encode, base64Decode, sha256Hash } = require('./encryptors');
 
 // Validate command line arguments
-if (process.argv.length < 3 || !['encode', 'decode'].includes(process.argv[2])) {
-  process.stdout.write('Usage: node super-encoder.js [encode|decode]\n');
+if (process.argv.length < 3 || !['encode', 'decode', 'hash'].includes(process.argv[2])) {
+  process.stdout.write('Usage: node super-encoder.js [encode|decode|hash]\n');
   process.exit();
 }
 
@@ -15,6 +15,7 @@ const encodeMessage = (str) => {
   encoded = symbolCipher(encoded); // Apply Symbol cipher
   encoded = vigenereCipher(encoded, vigenereKey); // Apply Vigenère cipher
   encoded = reverseCipher(encoded); // Apply Reverse cipher
+  encoded = base64Encode(encoded); // Apply Base64 encoding
   return encoded;
 };
 
@@ -22,11 +23,17 @@ const encodeMessage = (str) => {
 const decodeMessage = (str) => {
   const caesarShift = 4; // Same shift as encoding
   const vigenereKey = 'key'; // Same key as encoding
-  let decoded = reverseCipher(str); // First, reverse the encoding
+  let decoded = base64Decode(str); // First, decode Base64
+  decoded = reverseCipher(decoded); // Then, reverse the encoding
   decoded = vigenereCipher(decoded, vigenereKey); // Then, decode using Vigenère cipher
   decoded = symbolCipher(decoded); // Then, decode using Symbol cipher
   decoded = caesarCipher(decoded, -caesarShift); // Finally, reverse the Caesar cipher with a negative shift
   return decoded;
+};
+
+// Function to hash the message using SHA-256
+const sha256EncodeMessage = (str) => {
+  return sha256Hash(str);
 };
 
 // User input / output logic
@@ -38,6 +45,8 @@ const handleInput = (userInput) => {
     output = encodeMessage(str);
   } else if (process.argv[2] === 'decode') {
     output = decodeMessage(str);
+  } else if (process.argv[2] === 'hash') {
+    output = sha256EncodeMessage(str);
   }
 
   process.stdout.write(output + '\n');

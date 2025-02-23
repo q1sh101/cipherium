@@ -28,7 +28,8 @@ To run this project locally, follow the steps below:
 
 ### 🔧 Direct Commands Encode/Decode
 
-3.      Run the commands:
+3. Run the commands:
+        
         ```bash
         node message-mixer.js caesar <shift_value>
         node message-mixer.js caesar 5

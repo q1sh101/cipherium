@@ -50,8 +50,8 @@ ${colorText('║ 3. Reverse Cipher                      ║', color.green)}
 ${colorText('║ 4. Vigenère Cipher                     ║', color.green)} 
 ${colorText('║ 5. Super Encoder (Encode)              ║', color.green)}
 ${colorText('║ 6. Super Encoder (Decode)              ║', color.green)}
-${colorText('║ 7. Base64 Encode/Decode                ║', color.green)}  // Added option
-${colorText('║ 8. SHA256 Hash                         ║', color.green)}  // Added option
+${colorText('║ 7. Base64 Encode/Decode                ║', color.green)}
+${colorText('║ 8. SHA256 Hash                         ║', color.green)}  
 ${colorText('║ 9. Exit                                ║', color.red)}  
 ${colorText('╚════════════════════════════════════════╝', color.cyan)}
 ${colorText('Choose an option (1-9): ', color.yellow)}`);

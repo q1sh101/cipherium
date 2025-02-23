@@ -18,16 +18,23 @@ function colorText(text, colorCode) {
 
 // Base64 Encoding Function
 function base64Encode(str) {
+  if (!str) throw new Error('Input string is required for Base64 encoding.');
   return Buffer.from(str).toString('base64');
 }
 
 // Base64 Decoding Function
 function base64Decode(str) {
-  return Buffer.from(str, 'base64').toString('utf-8');
+  if (!str) throw new Error('Input string is required for Base64 decoding.');
+  try {
+    return Buffer.from(str, 'base64').toString('utf-8'); // Convert base64 to string
+  } catch (error) {
+    throw new Error('Invalid Base64 input.');
+  }
 }
 
 // SHA256 Hashing Function
 function sha256Hash(str) {
+  if (!str) throw new Error('Input string is required for SHA-256 hashing.');
   return crypto.createHash('sha256').update(str).digest('hex');
 }
 
@@ -65,8 +72,12 @@ function handleCaesarCipher() {
     process.stdout.write(colorText('Enter message: ', color.yellow));
     process.stdin.once('data', (messageInput) => {
       const message = messageInput.toString().trim();
-      const result = caesarCipher(message, amount);
-      process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+      try {
+        const result = caesarCipher(message, amount);
+        process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+      } catch (error) {
+        process.stdout.write(colorText(`Error: ${error.message}\n`, color.red));
+      }
       askTryAgain();
     });
   });
@@ -77,8 +88,12 @@ function handleSymbolCipher() {
   process.stdout.write(colorText('Enter message: ', color.yellow));
   process.stdin.once('data', (messageInput) => {
     const message = messageInput.toString().trim();
-    const result = symbolCipher(message);
-    process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+    try {
+      const result = symbolCipher(message);
+      process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+    } catch (error) {
+      process.stdout.write(colorText(`Error: ${error.message}\n`, color.red));
+    }
     askTryAgain();
   });
 }
@@ -88,8 +103,12 @@ function handleReverseCipher() {
   process.stdout.write(colorText('Enter message: ', color.yellow));
   process.stdin.once('data', (messageInput) => {
     const message = messageInput.toString().trim();
-    const result = reverseCipher(message);
-    process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+    try {
+      const result = reverseCipher(message);
+      process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+    } catch (error) {
+      process.stdout.write(colorText(`Error: ${error.message}\n`, color.red));
+    }
     askTryAgain();
   });
 }
@@ -109,8 +128,12 @@ function handleVigenereCipher() {
     process.stdout.write(colorText('Enter message: ', color.yellow));
     process.stdin.once('data', (messageInput) => {
       const message = messageInput.toString().trim();
-      const result = vigenereCipher(message, key);
-      process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+      try {
+        const result = vigenereCipher(message, key);
+        process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+      } catch (error) {
+        process.stdout.write(colorText(`Error: ${error.message}\n`, color.red));
+      }
       askTryAgain();
     });
   });
@@ -141,8 +164,12 @@ function handleSuperCipher(isEncode) {
   process.stdout.write(colorText(`Enter message to ${isEncode ? 'encode' : 'decode'}: `, color.yellow));
   process.stdin.once('data', (messageInput) => {
     const message = messageInput.toString().trim();
-    const result = isEncode ? encodeMessage(message) : decodeMessage(message);
-    process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+    try {
+      const result = isEncode ? encodeMessage(message) : decodeMessage(message);
+      process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+    } catch (error) {
+      process.stdout.write(colorText(`Error: ${error.message}\n`, color.red));
+    }
     askTryAgain();
   });
 }
@@ -155,15 +182,21 @@ function handleBase64() {
     process.stdout.write(colorText('Would you like to (1) encode or (2) decode? ', color.yellow));
     process.stdin.once('data', (choiceInput) => {
       const choice = choiceInput.toString().trim();
-      let result;
-      if (choice === '1') {
-        result = base64Encode(message);
-        process.stdout.write(`\n${colorText('Base64 Encoded: ', color.green)}${colorText(result, color.cyan)}\n\n`);
-      } else if (choice === '2') {
-        result = base64Decode(message);
-        process.stdout.write(`\n${colorText('Base64 Decoded: ', color.green)}${colorText(result, color.cyan)}\n\n`);
-      } else {
-        process.stdout.write(colorText('Invalid choice! Please choose 1 or 2.\n', color.red));
+      try {
+        let result;
+        if (choice === '1') {
+          result = base64Encode(message);
+          process.stdout.write(`\n${colorText('Base64 Encoded: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+        } else if (choice === '2') {
+          result = base64Decode(message);
+          process.stdout.write(`\n${colorText('Base64 Decoded: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+        } else {
+          process.stdout.write(colorText('Invalid choice! Please choose 1 or 2.\n', color.red));
+          handleBase64();  // Recursive retry
+          return;
+        }
+      } catch (error) {
+        process.stdout.write(colorText(`Error: ${error.message}\n`, color.red));
         handleBase64();  // Recursive retry
         return;
       }
@@ -177,8 +210,12 @@ function handleSHA256() {
   process.stdout.write(colorText('Enter message to hash with SHA256: ', color.yellow));
   process.stdin.once('data', (messageInput) => {
     const message = messageInput.toString().trim();
-    const result = sha256Hash(message);
-    process.stdout.write(`\n${colorText('SHA256 Hash: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+    try {
+      const result = sha256Hash(message);
+      process.stdout.write(`\n${colorText('SHA256 Hash: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+    } catch (error) {
+      process.stdout.write(colorText(`Error: ${error.message}\n`, color.red));
+    }
     askTryAgain();
   });
 }

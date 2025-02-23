@@ -76,6 +76,9 @@ const reverseCipher = (sentence) => {
 
 // Vigenère Cipher
 const vigenereCipher = (str, key) => {
+  if (!key || !key.match(/^[a-zA-Z]+$/)) {
+    throw new Error('Invalid key! Key must contain only letters.');
+  }
   let output = '';
   for (let i = 0, j = 0; i < str.length; i++) {
     let char = str[i];
@@ -96,16 +99,23 @@ const vigenereCipher = (str, key) => {
 
 // Base64 Encoding
 const base64Encode = (str) => {
+  if (!str) throw new Error('Input string is required for Base64 encoding.');
   return Buffer.from(str).toString('base64'); // Convert string to base64
 };
 
 // Base64 Decoding
 const base64Decode = (str) => {
-  return Buffer.from(str, 'base64').toString('utf-8'); // Convert base64 to string
+  if (!str) throw new Error('Input string is required for Base64 decoding.');
+  try {
+    return Buffer.from(str, 'base64').toString('utf-8'); // Convert base64 to string
+  } catch (error) {
+    throw new Error('Invalid Base64 input.');
+  }
 };
 
 // SHA-256 Hashing
 const sha256Hash = (str) => {
+  if (!str) throw new Error('Input string is required for SHA-256 hashing.');
   return crypto.createHash('sha256').update(str).digest('hex'); // Hash the string using SHA-256
 };
 

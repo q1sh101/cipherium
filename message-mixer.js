@@ -40,8 +40,12 @@ function getEncryptionMethod() {
 // Helper function to display the encrypted message
 function displayEncryptedMessage(encryptionMethod, userInput) {
   let str = userInput.toString().trim();
-  let output = encryptionMethod(str);
-  process.stdout.write(`\nHere is your encrypted message:\n> ${output}\n`);
+  try {
+    let output = encryptionMethod(str);
+    process.stdout.write(`\nHere is your encrypted message:\n> ${output}\n`);
+  } catch (error) {
+    process.stdout.write(`\nError: ${error.message}\n`);
+  }
   process.exit();
 }
 

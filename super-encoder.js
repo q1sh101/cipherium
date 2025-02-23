@@ -40,16 +40,18 @@ const sha256EncodeMessage = (str) => {
 const handleInput = (userInput) => {
   const str = userInput.toString().trim();
   let output;
-
-  if (process.argv[2] === 'encode') {
-    output = encodeMessage(str);
-  } else if (process.argv[2] === 'decode') {
-    output = decodeMessage(str);
-  } else if (process.argv[2] === 'hash') {
-    output = sha256EncodeMessage(str);
+  try {
+    if (process.argv[2] === 'encode') {
+      output = encodeMessage(str);
+    } else if (process.argv[2] === 'decode') {
+      output = decodeMessage(str);
+    } else if (process.argv[2] === 'hash') {
+      output = sha256EncodeMessage(str);
+    }
+    process.stdout.write(output + '\n');
+  } catch (error) {
+    process.stdout.write(`Error: ${error.message}\n`);
   }
-
-  process.stdout.write(output + '\n');
   process.exit();
 };
 

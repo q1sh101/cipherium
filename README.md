@@ -4,7 +4,7 @@
 
 ### Features
 
-- **Multiple encryption algorithms (Caesar, Vigenère, etc.)**
+- **Multiple encryption algorithms (Caesar, Vigenère, sha256, etc.)**
 - **User-friendly command-line interaction**
 - **Secure message encoding & decoding**
 

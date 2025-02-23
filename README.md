@@ -19,34 +19,28 @@ To run this project locally, follow the steps below:
     ```
 
 ### Usage 
-        Run the command:
-        ```bash
-        node main.js
-        ```
+
+
+2. Run the command:
+    ```bash
+    node main.js
+    ```
 
 ### 🔧 Direct Commands Encode/Decode
-        Run the command:
+
+3.      Run the commands:
         ```bash
         node message-mixer.js caesar <shift_value>
-        ```
-        ```bash
         node message-mixer.js caesar 5
-        ```
-        ```bash
         node message-mixer.js caesar -<shift_value>
-        ```
-        ```bash
         node message-mixer.js caesar -5
-        ```
-        ```bash
         node message-mixer.js symbol
-        ```
-        ```bash
         node message-mixer.js reverse
+        eth...
         ```
-
 
 ### Example:
+
 ```bash
 Example
 > node message-mixer.js caesar 5

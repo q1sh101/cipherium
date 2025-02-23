@@ -1,5 +1,5 @@
 // Import encryption functions from encryptors.js
-const { caesarCipher, symbolCipher, reverseCipher } = require('./encryptors');
+const { caesarCipher, symbolCipher, reverseCipher, vigenereCipher } = require('./encryptors');
 
 // Helper function for determining the encryption method
 function getEncryptionMethod() {
@@ -17,8 +17,15 @@ function getEncryptionMethod() {
       process.exit();
     }
     encryptionMethod = (str) => caesarCipher(str, amount);
+  } else if (encryptionType === 'vigenere') {
+    const key = process.argv[3];
+    if (!key || !key.match(/^[a-zA-Z]+$/)) { // Validate the key
+      process.stdout.write(`Please provide a valid key (letters only) for the Vigenère cipher.\n`);
+      process.exit();
+    }
+    encryptionMethod = (str) => vigenereCipher(str, key);
   } else {
-    process.stdout.write(`Please provide a valid encryption type: symbol, reverse, or caesar.\n`);
+    process.stdout.write(`Please provide a valid encryption type: symbol, reverse, caesar, or vigenere.\n`);
     process.exit();
   }
 

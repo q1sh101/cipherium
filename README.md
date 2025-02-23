@@ -37,6 +37,7 @@ To run this project locally, follow the steps below:
         node message-mixer.js caesar -5
         node message-mixer.js symbol
         node message-mixer.js reverse
+        node message-mixer.js vigenere KEY
         eth...
         ```
 

@@ -72,9 +72,30 @@ const reverseCipher = (sentence) => {
   return words.join(' '); // Join the reversed words back into a sentence
 };
 
+// Vigenère Cipher
+const vigenereCipher = (str, key) => {
+  let output = '';
+  for (let i = 0, j = 0; i < str.length; i++) {
+    let char = str[i];
+    if (char.match(/[a-z]/i)) { // Check if the character is a letter
+      let code = str.charCodeAt(i);
+      let shift = key[j % key.length].toUpperCase().charCodeAt(0) - 65; // Get shift from key
+      if (code >= 65 && code <= 90) { // Uppercase letters
+        char = String.fromCharCode(((code - 65 + shift) % 26) + 65);
+      } else if (code >= 97 && code <= 122) { // Lowercase letters
+        char = String.fromCharCode(((code - 97 + shift) % 26) + 97);
+      }
+      j++; // Move to the next character in the key
+    }
+    output += char; // Append the transformed character
+  }
+  return output;
+};
+
 // Exporting the functions to be used in other files
 module.exports = {
   caesarCipher,
   symbolCipher,
-  reverseCipher
+  reverseCipher,
+  vigenereCipher
 };

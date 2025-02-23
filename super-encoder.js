@@ -1,5 +1,5 @@
 // Import the encryptors functions
-const { caesarCipher, symbolCipher, reverseCipher } = require('./encryptors');
+const { caesarCipher, symbolCipher, reverseCipher, vigenereCipher } = require('./encryptors');
 
 // Validate command line arguments
 if (process.argv.length < 3 || !['encode', 'decode'].includes(process.argv[2])) {
@@ -10,8 +10,10 @@ if (process.argv.length < 3 || !['encode', 'decode'].includes(process.argv[2])) 
 // Function to encode the message
 const encodeMessage = (str) => {
   const caesarShift = 4; // Example shift for Caesar cipher
+  const vigenereKey = 'key'; // Example key for Vigenère cipher
   let encoded = caesarCipher(str, caesarShift); // Apply Caesar cipher
   encoded = symbolCipher(encoded); // Apply Symbol cipher
+  encoded = vigenereCipher(encoded, vigenereKey); // Apply Vigenère cipher
   encoded = reverseCipher(encoded); // Apply Reverse cipher
   return encoded;
 };
@@ -19,7 +21,9 @@ const encodeMessage = (str) => {
 // Function to decode the message
 const decodeMessage = (str) => {
   const caesarShift = 4; // Same shift as encoding
+  const vigenereKey = 'key'; // Same key as encoding
   let decoded = reverseCipher(str); // First, reverse the encoding
+  decoded = vigenereCipher(decoded, vigenereKey); // Then, decode using Vigenère cipher
   decoded = symbolCipher(decoded); // Then, decode using Symbol cipher
   decoded = caesarCipher(decoded, -caesarShift); // Finally, reverse the Caesar cipher with a negative shift
   return decoded;

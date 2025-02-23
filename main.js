@@ -1,5 +1,5 @@
 // main.js - Main terminal interface for CodexCipher
-const { caesarCipher, symbolCipher, reverseCipher } = require('./encryptors');
+const { caesarCipher, symbolCipher, reverseCipher, vigenereCipher } = require('./encryptors');
 
 // ANSI color codes (minimal set)
 const color = {
@@ -24,11 +24,12 @@ ${colorText('╠═════════════════════�
 ${colorText('║ 1. Caesar Cipher                       ║', color.green)}
 ${colorText('║ 2. Symbol Cipher                       ║', color.green)}
 ${colorText('║ 3. Reverse Cipher                      ║', color.green)}
-${colorText('║ 4. Super Encoder (Encode)              ║', color.green)}
-${colorText('║ 5. Super Encoder (Decode)              ║', color.green)}
-${colorText('║ 6. Exit                                ║', color.red)}
+${colorText('║ 4. Vigenère Cipher                     ║', color.green)} 
+${colorText('║ 5. Super Encoder (Encode)              ║', color.green)}
+${colorText('║ 6. Super Encoder (Decode)              ║', color.green)}
+${colorText('║ 7. Exit                                ║', color.red)}  
 ${colorText('╚════════════════════════════════════════╝', color.cyan)}
-${colorText('Choose an option (1-6): ', color.yellow)}`);
+${colorText('Choose an option (1-7): ', color.yellow)}`);
 }
 
 // Handles Caesar Cipher logic
@@ -61,6 +62,28 @@ function handleSymbolCipher() {
     const result = symbolCipher(message);
     process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
     askTryAgain();
+  });
+}
+
+// Handles Vigenère Cipher logic
+function handleVigenereCipher() {
+  process.stdout.write(colorText('Enter key for Vigenère cipher (letters only): ', color.yellow));
+  process.stdin.once('data', (keyInput) => {
+    const key = keyInput.toString().trim();
+    
+    if (!key.match(/^[a-zA-Z]+$/)) {
+      process.stdout.write(colorText('Invalid key! Please use letters only.\n', color.red));
+      handleVigenereCipher(); // Recursive retry
+      return;
+    }
+
+    process.stdout.write(colorText('Enter message: ', color.yellow));
+    process.stdin.once('data', (messageInput) => {
+      const message = messageInput.toString().trim();
+      const result = vigenereCipher(message, key);
+      process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+      askTryAgain();
+    });
   });
 }
 
@@ -128,9 +151,10 @@ function listenForMenuInput() {
           askTryAgain();
         });
         break;
-      case '4': handleSuperCipher(true); break;
-      case '5': handleSuperCipher(false); break;
-      case '6': process.exit(); break;
+      case '4': handleVigenereCipher(); break; // Vigenère option
+      case '5': handleSuperCipher(true); break;
+      case '6': handleSuperCipher(false); break;
+      case '7': process.exit(); break; // Updated exit option
       default:
         process.stdout.write(colorText('Invalid choice!\n', color.red));
         displayMenu();

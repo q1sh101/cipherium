@@ -23,7 +23,7 @@ To run this project locally, follow the steps below:
 
 2. Run the command:
     ```bash
-    npm install
+    npm install cipherium
     ```
 
     

@@ -1,6 +1,6 @@
 {
     "name": "cipherium",
-    "version": "1.0.1",
+    "version": "1.0.0",
     "description": "A powerful encryption toolkit for Node.js",
     "main": "lib/encryptors.js",
     "bin": {

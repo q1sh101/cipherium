@@ -23,7 +23,7 @@ To run this project locally, follow the steps below:
 
 2. Run the command:
     ```bash
-    node main.js
+    node cipherium.js
     ```
 
 ### 🔧 Direct Commands Encode/Decode

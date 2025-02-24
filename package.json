@@ -1,0 +1,27 @@
+{
+    "name": "cipherium",
+    "version": "1.0.0",
+    "description": "A powerful encryption toolkit for Node.js",
+    "main": "lib/encryptors.js",
+    "bin": {
+      "cipherium": "./bin/cipherium.js"
+    },
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "node bin/cipherium.js"
+    },
+    "keywords": ["encryption", "cipher", "caesar", "vigenere", "base64", "sha256"],
+    "author": "Giorgi Kishmareia",
+    "license": "MIT",
+    "dependencies": {
+      "crypto": "^1.0.1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/q1sh101/cipherium.git"
+    },
+    "bugs": {
+      "url": "https://github.com/q1sh101/cipherium/issues"
+    },
+    "homepage": "https://github.com/q1sh101/cipherium#readme"
+  }

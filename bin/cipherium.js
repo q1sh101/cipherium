@@ -1,4 +1,6 @@
-const { caesarCipher, symbolCipher, reverseCipher, vigenereCipher } = require('./encryptors');
+#!/usr/bin/env node
+
+const { caesarCipher, symbolCipher, reverseCipher, vigenereCipher } = require('../lib/encryptors');
 const crypto = require('crypto');  // Import crypto module for SHA256
 const Buffer = require('buffer').Buffer;  // Import Buffer for Base64
 

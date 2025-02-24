@@ -44,7 +44,7 @@ function sha256Hash(str) {
 function displayMenu() {
   process.stdout.write(`
 ${colorText('╔════════════════════════════════════════╗', color.cyan)}
-${colorText('║           q1sh101 Cipherium            ║', color.cyan)}
+${colorText('║           q1sh101 cipherium            ║', color.cyan)}
 ${colorText('╠════════════════════════════════════════╣', color.cyan)}
 ${colorText('║ 1. Caesar Cipher                       ║', color.green)}
 ${colorText('║ 2. Symbol Cipher                       ║', color.green)}

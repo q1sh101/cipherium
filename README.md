@@ -1,6 +1,6 @@
-# Cipherium
+# cipherium
 
-🔐 Cipherium - A powerful encryption tool for encoding and decoding messages using various cipher techniques.
+🔐 cipherium - A powerful encryption tool for encoding and decoding messages using various cipher techniques.
 
 ### Features
 
@@ -14,8 +14,8 @@ To run this project locally, follow the steps below:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/q1sh101/Cipherium.git
-    cd Cipherium
+    git clone https://github.com/q1sh101/cipherium.git
+    cd cipherium
     ```
 
 ### Usage 
@@ -23,33 +23,11 @@ To run this project locally, follow the steps below:
 
 2. Run the command:
     ```bash
-    node cipherium.js
+    npm install
     ```
 
-### 🔧 Direct Commands Encode/Decode
-
-3. Run the commands:
-        
-        ```bash
-        node message-mixer.js caesar <shift_value>
-        node message-mixer.js caesar 5
-        node message-mixer.js caesar -<shift_value>
-        node message-mixer.js caesar -5
-        node message-mixer.js symbol
-        node message-mixer.js reverse
-        node message-mixer.js vigenere KEY
-        eth...
-        ```
-
-### Example:
-
-```bash
-Example
-> node message-mixer.js caesar 5
-
-Enter the message you would like to encrypt...
-> hello world
-
-Here is your encrypted message:
-> mjqqt btwqi
-```
+    
+3. Run the command:
+    ```bash
+    npx cipherium
+    ```

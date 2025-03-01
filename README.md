@@ -13,6 +13,13 @@
 - **Secure message encoding & decoding**
 
 
+
+### 🎮 Usage
+
+Once installed, cipherium provides an interactive menu where you can choose from various encryption and decryption options.
+
+
+
 ### 🛠 Installation
 
 To run this project locally, follow the steps below:
@@ -39,8 +46,14 @@ To run this project locally, follow the steps below:
 
 
 
+---
+
+
+
 ## 📜 License
 This project is licensed under the **MIT License**.
+
+
 
 
 ## 💡 Contributing

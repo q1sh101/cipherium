@@ -27,6 +27,9 @@ function base64Encode(str) {
 // Base64 Decoding Function
 function base64Decode(str) {
   if (!str) throw new Error('Input string is required for Base64 decoding.');
+  if (!/^[A-Za-z0-9+/]*={0,2}$/.test(str)) {
+    throw new Error('Invalid Base64 input.');
+  }
   try {
     return Buffer.from(str, 'base64').toString('utf-8'); // Convert base64 to string
   } catch (error) {
@@ -37,7 +40,7 @@ function base64Decode(str) {
 // SHA256 Hashing Function
 function sha256Hash(str) {
   if (!str) throw new Error('Input string is required for SHA-256 hashing.');
-  return crypto.createHash('sha256').update(str).digest('hex');
+  return crypto.createHash('sha256').update(str, 'utf-8').digest('hex');
 }
 
 // Displays the main menu
@@ -121,7 +124,7 @@ function handleVigenereCipher() {
   process.stdin.once('data', (keyInput) => {
     const key = keyInput.toString().trim();
     
-    if (!key.match(/^[a-zA-Z]+$/)) {
+    if (!key || !key.trim() || !key.match(/^[a-zA-Z]+$/)) {
       process.stdout.write(colorText('Invalid key! Please use letters only.\n', color.red));
       handleVigenereCipher(); // Recursive retry
       return;
@@ -143,6 +146,7 @@ function handleVigenereCipher() {
 
 // Super Encoder/Decoder
 const CAESAR_SHIFT = 5; // shift value for consistency
+const VIGENERE_KEY = 'key'; // key for Vigenère cipher
 
 function encodeMessage(str) {
   return reverseCipher(          // Step 3: Reverse

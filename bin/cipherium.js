@@ -1,150 +1,249 @@
 #!/usr/bin/env node
 
-const { caesarCipher, symbolCipher, reverseCipher, vigenereCipher, base64Encode, base64Decode, sha256Hash } = require('../lib/encryptors');
+// Importing all cipher functions from encryptors.js
+const { 
+  caesarCipher, symbolCipher, reverseCipher, vigenereCipher, 
+  base64Encode, base64Decode, sha256Hash, 
+  streamCipherX, keyStretchHash, matrixMixer, doubleHashChain 
+} = require('../lib/encryptors');
 
-// ANSI color codes (minimal set)
+// ANSI color codes for cyberpunk/matrix aesthetic
 const color = {
-  reset: '\x1b[0m',    // Reset styles
-  red: '\x1b[31m',     // Errors
-  green: '\x1b[32m',   // Success
-  yellow: '\x1b[33m',  // Prompts
-  cyan: '\x1b[36m'     // Menu/Results
+  reset: '\x1b[0m',     // Reset styles
+  neonGreen: '\x1b[92m', // Bright neon green (Matrix vibe)
+  neonPink: '\x1b[95m',  // Bright neon pink (Cyberpunk)
+  neonBlue: '\x1b[96m',  // Bright neon blue (Techy)
+  darkRed: '\x1b[31m',   // Dark red for errors/exit
+  gray: '\x1b[90m',      // Subtle gray for secondary text
+  bold: '\x1b[1m',       // Bold text
+  underline: '\x1b[4m'   // Underline text
 };
 
-// Applies color to text and resets afterward
-function colorText(text, colorCode) {
-  return `${colorCode}${text}${color.reset}`;
+// Applies color and style to text
+function colorText(text, colorCode, bold = false, underline = false) {
+  const boldCode = bold ? color.bold : '';
+  const underlineCode = underline ? color.underline : '';
+  return `${boldCode}${underlineCode}${colorCode}${text}${color.reset}`;
 }
 
-// Displays the main menu
-function displayMenu() {
-  process.stdout.write(`
-${colorText('╔════════════════════════════════════════╗', color.cyan)}
-${colorText('║           q1sh101 cipherium            ║', color.cyan)}
-${colorText('╠════════════════════════════════════════╣', color.cyan)}
-${colorText('║ 1. Caesar Cipher                       ║', color.green)}
-${colorText('║ 2. Symbol Cipher                       ║', color.green)}
-${colorText('║ 3. Reverse Cipher                      ║', color.green)}
-${colorText('║ 4. Vigenère Cipher (Encode)            ║', color.green)} 
-${colorText('║ 5. Vigenère Cipher (Decode)            ║', color.green)}
-${colorText('║ 6. Super Encoder (Encode)              ║', color.green)}
-${colorText('║ 7. Super Encoder (Decode)              ║', color.green)}
-${colorText('║ 8. Base64 Encode                       ║', color.green)}
-${colorText('║ 9. Base64 Decode                       ║', color.green)}
-${colorText('║ 10. SHA256 Hash                        ║', color.green)}  
-${colorText('║ 11. Exit                               ║', color.red)}  
-${colorText('╚════════════════════════════════════════╝', color.cyan)}
-${colorText('Choose an option (1-11): ', color.yellow)}`);
+// Simple delay function for animations
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Unified input handler
+// Typing animation for cyberpunk effect
+async function typeText(text, speed = 30) {
+  for (let char of text) {
+    process.stdout.write(char);
+    await delay(speed);
+  }
+  process.stdout.write('\n');
+}
+
+// Enhanced, eye-catching ANSI art for "Cipherium"
+async function displayCipheriumArt() {
+  const art = [
+    colorText('   ┌──┬────┬──┬────┬──┬────┬──┐', color.neonGreen),
+    colorText('   ░▒▓█  C I P H E R I U M  █▓▒░', color.neonPink, true),
+    colorText('   └──┴────┴──┴────┴──┴────┴──┘', color.neonGreen),
+    colorText('  ├─[ 0101 ]─[ 1010 ]─[ 1111 ]─┤', color.neonBlue),
+    colorText('   >>> Access Granted...', color.neonGreen)
+  ];
+  for (let line of art) {
+    await typeText(line, 15);
+  }
+}
+
+// Displays the refined, minimalistic main menu with clear encode/decode labels
+async function displayMenu() {
+  process.stdout.write('\x1Bc'); // Clear terminal for fresh look
+  await displayCipheriumArt();
+  await delay(0);
+  const menu = `
+${colorText('  ┌───────────────────────────────────────┐', color.neonGreen, true)}
+${colorText('  │ Protocols:                            │', color.neonGreen, true)}
+${colorText('  ├───────────────────────────────────────┤', color.neonGreen)}
+${colorText('  │ 01 Caesar                             │', color.neonBlue)}
+${colorText('  │ 02 Symbol                             │', color.neonBlue)}
+${colorText('  │ 03 Reverse                            │', color.neonBlue)}
+${colorText('  │ 04 Vigenère +Encode                   │', color.neonBlue)}
+${colorText('  │ 05 Vigenère -Decode                   │', color.neonBlue)}
+${colorText('  │ 06 Super  Encode                      │', color.neonBlue)}
+${colorText('  │ 07 Super -Decode                      │', color.neonBlue)}
+${colorText('  │ 08 Base64  Encode                     │', color.neonBlue)}
+${colorText('  │ 09 Base64 -Decode                     │', color.neonBlue)}
+${colorText('  │ 10 SHA256                             │', color.neonBlue)}
+${colorText('  │ 11 StreamCipherX  Encode / -Decode    │', color.neonBlue)}
+${colorText('  │ 12 KeyStretchHash                     │', color.neonBlue)}
+${colorText('  │ 13 MatrixMixer                        │', color.neonBlue)}
+${colorText('  │ 14 DoubleHashChain                    │', color.neonBlue)}
+${colorText('  │ 15 Exit                               │', color.darkRed, true)}
+${colorText('  └───────────────────────────────────────┘', color.neonGreen, true)}
+${colorText('>>> Select protocol (01-15): ', color.neonGreen, false, true)}`;
+  
+  process.stdout.write(menu);
+}
+
+// Unified input handler with clear prompt
 function getInput(prompt, callback) {
-  process.stdout.write(colorText(prompt, color.yellow));
+  process.stdout.write(colorText(`>>> ${prompt}`, color.neonGreen));
   process.stdin.once('data', (input) => {
     callback(input.toString().trim());
   });
 }
 
-// Retry/Exit logic
+// Retry/exit logic with refined text
 function askTryAgain() {
-  getInput('Try again? (yes/no): ', (answer) => {
+  getInput('Restart protocol? (y/n): ', (answer) => {
     const response = answer.toLowerCase();
     if (['yes', 'y'].includes(response)) {
-      displayMenu();
-      listenForMenuInput();
+      displayMenu().then(listenForMenuInput);
     } else if (['no', 'n'].includes(response)) {
-      process.stdout.write(colorText('Goodbye!\n', color.red));
+      process.stdout.write(colorText('>>> Shutting down system...\n', color.darkRed, true));
       process.exit();
     } else {
-      process.stdout.write(colorText('Invalid response! Please enter "yes" or "no".\n', color.red));
+      process.stdout.write(colorText('>>> Error: Enter "y" or "n" only.\n', color.darkRed));
       askTryAgain();
     }
   });
 }
 
-// Handles cipher execution with error handling
+// Executes cipher with clear output
 function executeCipher(cipherFn, message, params = {}) {
   try {
     const result = cipherFn(message, params);
-    process.stdout.write(`\n${colorText('Result: ', color.green)}${colorText(result, color.cyan)}\n\n`);
+    process.stdout.write(colorText(`>>> Processed data: ${result}\n`, color.neonPink, true));
     askTryAgain();
   } catch (error) {
-    process.stdout.write(colorText(`Error: ${error.message}\n`, color.red));
+    process.stdout.write(colorText(`>>> Error detected: ${error.message}\n`, color.darkRed));
     askTryAgain();
   }
 }
 
-// Menu handlers
+// Handler for Caesar Cipher
 function handleCaesarCipher() {
-  getInput('Enter shift amount (integer): ', (amount) => {
+  getInput('Enter shift number: ', (amount) => {
     const shift = parseInt(amount, 10);
     if (isNaN(shift)) {
-      process.stdout.write(colorText('Invalid shift! Must be an integer.\n', color.red));
+      process.stdout.write(colorText('>>> Error: Shift must be a number.\n', color.darkRed));
       return handleCaesarCipher();
     }
-    getInput('Enter message: ', (message) => executeCipher(caesarCipher, message, { amount: shift }));
+    getInput('Enter your message: ', (message) => executeCipher(caesarCipher, message, { amount: shift }));
   });
 }
 
+// Handler for Symbol Cipher
 function handleSymbolCipher() {
-  getInput('Enter message: ', (message) => executeCipher(symbolCipher, message));
+  getInput('Enter your message: ', (message) => executeCipher(symbolCipher, message));
 }
 
+// Handler for Reverse Cipher
 function handleReverseCipher() {
-  getInput('Enter message: ', (message) => executeCipher(reverseCipher, message));
+  getInput('Enter your message: ', (message) => executeCipher(reverseCipher, message));
 }
 
+// Handler for Vigenère Cipher (encode or decode)
 function handleVigenereCipher(isDecode) {
   getInput('Enter key (letters only): ', (key) => {
     if (!key.match(/^[a-zA-Z]+$/)) {
-      process.stdout.write(colorText('Invalid key! Must contain only letters.\n', color.red));
+      process.stdout.write(colorText('>>> Error: Key must be letters only.\n', color.darkRed));
       return handleVigenereCipher(isDecode);
     }
-    getInput('Enter message: ', (message) => executeCipher(vigenereCipher, message, { key, decrypt: isDecode }));
+    getInput('Enter your message: ', (message) => executeCipher(vigenereCipher, message, { key, decrypt: isDecode }));
   });
 }
 
+// Handler for Super Encoder (encode or decode)
 function handleSuperCipher(isEncode) {
-  const fn = isEncode ? (str) => reverseCipher(symbolCipher(caesarCipher(str, 5))) : (str) => caesarCipher(symbolCipher(reverseCipher(str)), -5);
+  const fn = isEncode 
+    ? (str) => reverseCipher(symbolCipher(caesarCipher(str, 5))) 
+    : (str) => caesarCipher(symbolCipher(reverseCipher(str)), -5);
   getInput(`Enter message to ${isEncode ? 'encode' : 'decode'}: `, (message) => executeCipher(fn, message));
 }
 
+// Handler for Base64 (encode or decode)
 function handleBase64(isEncode) {
   const fn = isEncode ? base64Encode : base64Decode;
-  getInput(`Enter message to ${isEncode ? 'encode' : 'decode'} in Base64: `, (message) => executeCipher(fn, message));
+  getInput(`Enter message to ${isEncode ? 'encode' : 'decode'}: `, (message) => executeCipher(fn, message));
 }
 
+// Handler for SHA256 Hash
 function handleSHA256() {
-  getInput('Enter message to hash with SHA256: ', (message) => executeCipher(sha256Hash, message));
+  getInput('Enter message to hash: ', (message) => executeCipher(sha256Hash, message));
 }
 
-// Menu input handler
-function listenForMenuInput() {
-  process.stdin.once('data', (choiceInput) => {
+// Handler for StreamCipherX
+function handleStreamCipherX() {
+  getInput('Enter key (same length as message or longer): ', (key) => {
+    getInput('Enter your message: ', (message) => {
+      if (key.length < message.length) {
+        process.stdout.write(colorText('>>> Error: Key must be as long as message or longer.\n', color.darkRed));
+        return handleStreamCipherX();
+      }
+      executeCipher(streamCipherX, message, { key });
+    });
+  });
+}
+
+// Handler for KeyStretchHash
+function handleKeyStretchHash() {
+  getInput('Enter key: ', (key) => {
+    getInput('Enter your message: ', (message) => executeCipher(keyStretchHash, message, { key }));
+  });
+}
+
+// Handler for MatrixMixer
+function handleMatrixMixer() {
+  getInput('Enter key (minimum 9 characters): ', (key) => {
+    if (key.length < 9) {
+      process.stdout.write(colorText('>>> Error: Key must be 9 characters or more.\n', color.darkRed));
+      return handleMatrixMixer();
+    }
+    getInput('Enter your message: ', (message) => executeCipher(matrixMixer, message, { key }));
+  });
+}
+
+// Handler for DoubleHashChain
+function handleDoubleHashChain() {
+  getInput('Enter key: ', (key) => {
+    getInput('Enter your message: ', (message) => executeCipher(doubleHashChain, message, { key }));
+  });
+}
+
+// Listens for menu input and routes to handlers
+async function listenForMenuInput() {
+  process.stdin.once('data', async (choiceInput) => {
     const choice = choiceInput.toString().trim();
     switch (choice) {
-      case '1': handleCaesarCipher(); break;
-      case '2': handleSymbolCipher(); break;
-      case '3': handleReverseCipher(); break;
-      case '4': handleVigenereCipher(false); break;
-      case '5': handleVigenereCipher(true); break;
-      case '6': handleSuperCipher(true); break;
-      case '7': handleSuperCipher(false); break;
-      case '8': handleBase64(true); break;
-      case '9': handleBase64(false); break;
+      case '01': case '1': handleCaesarCipher(); break;
+      case '02': case '2': handleSymbolCipher(); break;
+      case '03': case '3': handleReverseCipher(); break;
+      case '04': case '4': handleVigenereCipher(false); break;
+      case '05': case '5': handleVigenereCipher(true); break;
+      case '06': case '6': handleSuperCipher(true); break;
+      case '07': case '7': handleSuperCipher(false); break;
+      case '08': case '8': handleBase64(true); break;
+      case '09': case '9': handleBase64(false); break;
       case '10': handleSHA256(); break;
-      case '11': process.exit(); break;
+      case '11': handleStreamCipherX(); break;
+      case '12': handleKeyStretchHash(); break;
+      case '13': handleMatrixMixer(); break;
+      case '14': handleDoubleHashChain(); break;
+      case '15': 
+        process.stdout.write(colorText('>>> Shutting down system GOODBYE...!\n', color.darkRed, true));
+        process.exit(); 
+        break;
       default:
-        process.stdout.write(colorText('Invalid choice! Please select 1-11.\n', color.red));
-        displayMenu();
+        process.stdout.write(colorText('>>> Error: Invalid protocol. Choose 01-15.\n', color.darkRed));
+        await displayMenu();
         listenForMenuInput();
     }
   });
 }
 
-// Start program
-function main() {
-  displayMenu();
+// Starts the program with async menu display
+async function main() {
+  await displayMenu();
   listenForMenuInput();
 }
 

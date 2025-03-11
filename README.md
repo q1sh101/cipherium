@@ -2,8 +2,8 @@
 
 🔐 Cipherium - A powerful encryption tool for encoding and decoding messages using various cipher techniques.
 
-![GitHub License](https://img.shields.io/badge/license-MIT-blue)
-![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows%20%7C%20macOS-lightgrey)
+![GitHub License](https://img.shields.io/badge/license-MIT-red)
+![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows%20%7C%20macOS-green)
 
 
 ### ✨ Features

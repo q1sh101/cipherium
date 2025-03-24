@@ -20,28 +20,26 @@ const color = {
 };
 
 // Applies color and style to text
-function colorText(text, colorCode, bold = false, underline = false) {
+const colorText = (text, colorCode, bold = false, underline = false) => {
   const boldCode = bold ? color.bold : '';
   const underlineCode = underline ? color.underline : '';
   return `${boldCode}${underlineCode}${colorCode}${text}${color.reset}`;
-}
+};
 
 // Simple delay function for animations
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Typing animation for cyberpunk effect
-async function typeText(text, speed = 30) {
+const typeText = async (text, speed = 30) => {
   for (let char of text) {
     process.stdout.write(char);
     await delay(speed);
   }
   process.stdout.write('\n');
-}
+};
 
 // Enhanced, eye-catching ANSI art for "Cipherium"
-async function displayCipheriumArt() {
+const displayCipheriumArt = async () => {
   const art = [
     colorText('   ┌──┬────┬──┬────┬──┬────┬──┐', color.neonGreen),
     colorText('   ░▒▓█  C I P H E R I U M  █▓▒░', color.neonPink, true),
@@ -52,10 +50,10 @@ async function displayCipheriumArt() {
   for (let line of art) {
     await typeText(line, 15);
   }
-}
+};
 
 // Displays the refined, minimalistic main menu with clear encode/decode labels
-async function displayMenu() {
+const displayMenu = async () => {
   process.stdout.write('\x1Bc'); // Clear terminal for fresh look
   await displayCipheriumArt();
   await delay(0);
@@ -82,18 +80,16 @@ ${colorText('  └────────────────────�
 ${colorText('>>> Select protocol (01-15): ', color.neonGreen, false, true)}`;
   
   process.stdout.write(menu);
-}
+};
 
 // Unified input handler with clear prompt
-function getInput(prompt, callback) {
+const getInput = (prompt, callback) => {
   process.stdout.write(colorText(`>>> ${prompt}`, color.neonGreen));
-  process.stdin.once('data', (input) => {
-    callback(input.toString().trim());
-  });
-}
+  process.stdin.once('data', (input) => callback(input.toString().trim()));
+};
 
 // Retry/exit logic with refined text
-function askTryAgain() {
+const askTryAgain = () => {
   getInput('Restart protocol? (y/n): ', (answer) => {
     const response = answer.toLowerCase();
     if (['yes', 'y'].includes(response)) {
@@ -106,10 +102,10 @@ function askTryAgain() {
       askTryAgain();
     }
   });
-}
+};
 
 // Executes cipher with clear output
-function executeCipher(cipherFn, message, params = {}) {
+const executeCipher = (cipherFn, message, params = {}) => {
   try {
     const result = cipherFn(message, params);
     process.stdout.write(colorText(`>>> Processed data: ${result}\n`, color.neonPink, true));
@@ -118,10 +114,10 @@ function executeCipher(cipherFn, message, params = {}) {
     process.stdout.write(colorText(`>>> Error detected: ${error.message}\n`, color.darkRed));
     askTryAgain();
   }
-}
+};
 
 // Handler for Caesar Cipher
-function handleCaesarCipher() {
+const handleCaesarCipher = () => {
   getInput('Enter shift number: ', (amount) => {
     const shift = parseInt(amount, 10);
     if (isNaN(shift)) {
@@ -130,20 +126,20 @@ function handleCaesarCipher() {
     }
     getInput('Enter your message: ', (message) => executeCipher(caesarCipher, message, { amount: shift }));
   });
-}
+};
 
 // Handler for Symbol Cipher
-function handleSymbolCipher() {
+const handleSymbolCipher = () => {
   getInput('Enter your message: ', (message) => executeCipher(symbolCipher, message));
-}
+};
 
 // Handler for Reverse Cipher
-function handleReverseCipher() {
+const handleReverseCipher = () => {
   getInput('Enter your message: ', (message) => executeCipher(reverseCipher, message));
-}
+};
 
 // Handler for Vigenère Cipher (encode or decode)
-function handleVigenereCipher(isDecode) {
+const handleVigenereCipher = (isDecode) => {
   getInput('Enter key (letters only): ', (key) => {
     if (!key.match(/^[a-zA-Z]+$/)) {
       process.stdout.write(colorText('>>> Error: Key must be letters only.\n', color.darkRed));
@@ -151,29 +147,29 @@ function handleVigenereCipher(isDecode) {
     }
     getInput('Enter your message: ', (message) => executeCipher(vigenereCipher, message, { key, decrypt: isDecode }));
   });
-}
+};
 
 // Handler for Super Encoder (encode or decode)
-function handleSuperCipher(isEncode) {
+const handleSuperCipher = (isEncode) => {
   const fn = isEncode 
     ? (str) => reverseCipher(symbolCipher(caesarCipher(str, 5))) 
     : (str) => caesarCipher(symbolCipher(reverseCipher(str)), -5);
   getInput(`Enter message to ${isEncode ? 'encode' : 'decode'}: `, (message) => executeCipher(fn, message));
-}
+};
 
 // Handler for Base64 (encode or decode)
-function handleBase64(isEncode) {
+const handleBase64 = (isEncode) => {
   const fn = isEncode ? base64Encode : base64Decode;
   getInput(`Enter message to ${isEncode ? 'encode' : 'decode'}: `, (message) => executeCipher(fn, message));
-}
+};
 
 // Handler for SHA256 Hash
-function handleSHA256() {
+const handleSHA256 = () => {
   getInput('Enter message to hash: ', (message) => executeCipher(sha256Hash, message));
-}
+};
 
 // Handler for StreamCipherX
-function handleStreamCipherX() {
+const handleStreamCipherX = () => {
   getInput('Enter key (same length as message or longer): ', (key) => {
     getInput('Enter your message: ', (message) => {
       if (key.length < message.length) {
@@ -183,17 +179,17 @@ function handleStreamCipherX() {
       executeCipher(streamCipherX, message, { key });
     });
   });
-}
+};
 
 // Handler for KeyStretchHash
-function handleKeyStretchHash() {
+const handleKeyStretchHash = () => {
   getInput('Enter key: ', (key) => {
     getInput('Enter your message: ', (message) => executeCipher(keyStretchHash, message, { key }));
   });
-}
+};
 
 // Handler for MatrixMixer
-function handleMatrixMixer() {
+const handleMatrixMixer = () => {
   getInput('Enter key (minimum 9 characters): ', (key) => {
     if (key.length < 9) {
       process.stdout.write(colorText('>>> Error: Key must be 9 characters or more.\n', color.darkRed));
@@ -201,17 +197,17 @@ function handleMatrixMixer() {
     }
     getInput('Enter your message: ', (message) => executeCipher(matrixMixer, message, { key }));
   });
-}
+};
 
 // Handler for DoubleHashChain
-function handleDoubleHashChain() {
+const handleDoubleHashChain = () => {
   getInput('Enter key: ', (key) => {
     getInput('Enter your message: ', (message) => executeCipher(doubleHashChain, message, { key }));
   });
-}
+};
 
 // Listens for menu input and routes to handlers
-async function listenForMenuInput() {
+const listenForMenuInput = async () => {
   process.stdin.once('data', async (choiceInput) => {
     const choice = choiceInput.toString().trim();
     switch (choice) {
@@ -239,12 +235,12 @@ async function listenForMenuInput() {
         listenForMenuInput();
     }
   });
-}
+};
 
 // Starts the program with async menu display
-async function main() {
+const main = async () => {
   await displayMenu();
   listenForMenuInput();
-}
+};
 
 main();
